@@ -1,0 +1,29 @@
+docker command cli
+
+docker build -t nodejs-elliot .
+
+docker run --rm -p 3000:3000 --name xxx1 nodejs-elliot 
+
+docker volume create mongodb
+docker volume create mongodb_config
+
+
+docker network create mongodb
+
+
+docker run -it --rm -d -v mongodb:/data/db -v mongodb_config:/data/configdb -p 27017:27017 --network mongodb mongo
+
+
+docker run -it --rm -d --network mongodb -p 8081:8081 -e SERVER_PORT=8081 -e SERVER_PORT=8081 -e DATABASE_CONNECTIONSTRING=mongodb://mongodb:27017/easy-notes --name xxx nodejs-elliot
+docker run -d --network mongodb -p 3000:3000 --name xxx nodejs-elliot
+
+
+
+curl --request POST --url http://localhost:3000/notes   --header 'content-type: application/json'   --data '{"name": "this is a note","text": "this is a note that I wanted to take while I was working on writing a blog post.","owner": "peter"}
+
+
+
+
+
+
+docker run -it --rm -d --network mongodb --name elliot-notes -p 8081:8081 -e SERVER_PORT=8081 -e SERVER_PORT=8081 -e DATABASE_CONNECTIONSTRING=mongodb://mongodb:27017/easy-notes \ notes-service
