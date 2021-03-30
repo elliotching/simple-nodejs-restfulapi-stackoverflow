@@ -26,30 +26,43 @@ function mongoUrl(port) {
 }
 // Connecting to the database
 console.log("Connecting to the database\n");
+
 mongoose
-  .connect(mongoUrl("28017"), {
+  .connect(mongoUrl("27017"), {
     useNewUrlParser: true,
   })
   .then(() => {
-    console.log("Successfully connected to the database\n" + mongoUrl("28017"));
+    console.log("Successfully connected to the database\n" + mongoUrl("27017"));
   })
   .catch((err) => {
     console.log("Could not connect to the database. Exiting now...\n", err);
-    console.log("Retry in port 27017...");
-    mongoose
-      .connect(mongoUrl("27017"), {
-        useNewUrlParser: true,
-      })
-      .then(() => {
-        console.log(
-          "Successfully connected to the database\n" + mongoUrl("27017")
-        );
-      })
-      .catch((err) => {
-        console.log("Could not connect to the database. Exiting now...\n", err);
-        process.exit();
-      });
+    process.exit();
   });
+
+// mongoose
+// .connect(mongoUrl("28017"), {
+//   useNewUrlParser: true,
+// })
+// .then(() => {
+//   console.log("Successfully connected to the database\n" + mongoUrl("28017"));
+// })
+// .catch((err) => {
+//   console.log("Could not connect to the database. Exiting now...\n", err);
+//   console.log("Retry in port 27017...");
+//   mongoose
+//     .connect(mongoUrl("27017"), {
+//       useNewUrlParser: true,
+//     })
+//     .then(() => {
+//       console.log(
+//         "Successfully connected to the database\n" + mongoUrl("27017")
+//       );
+//     })
+//     .catch((err) => {
+//       console.log("Could not connect to the database. Exiting now...\n", err);
+//       process.exit();
+//     });
+// });
 
 // define a simple route
 app.get("/", (req, res) => {
