@@ -1,5 +1,5 @@
 module.exports = (app) => {
-    const notes = require('../controllers/note.controller.js');
+    const notes = require('../notes/note.controller.js');
 
   
     // Create a new Note
@@ -18,10 +18,10 @@ module.exports = (app) => {
     app.delete('/notes/:noteId', notes.delete);
 
     
-    // const controlApi = require('../controllers/register.controller.js');
+    const controlApi = require('../controllers/z.everything.controller.js');
 
-    // // Create a new Note
-    // app.post('/aaaa', controlApi.create);
+    // Create a new Note
+    app.post('/api/register', controlApi.register);
 
     // // Retrieve all Notes
     // app.get('/aaaaaaaa', controlApi.findAll);
