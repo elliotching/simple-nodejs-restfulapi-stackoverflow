@@ -14,6 +14,18 @@ docker push elliotching/elliot-nodejs
 
 
 
+CLEAN and CLEAR:::
+
+docker compose down
+docker image prune -a
+y
+docker volume prune
+y
+docker network prune
+y
+docker system prune -a
+y
+docker compose up
 
 
 

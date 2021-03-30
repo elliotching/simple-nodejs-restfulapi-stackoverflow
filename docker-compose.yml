@@ -16,7 +16,8 @@ services:
   mongo:
     container_name: mongo
     image: mongo
-    restart: always
+    ports:
+      - "28017:27017"
     # volumes: 
     #   - type: bind
     #     source: d:/data/db
@@ -25,7 +26,7 @@ services:
     #   - "D:\\data\\db\\:/var/lib/docker/volumes/node-easy-notes-app_mongodata/"
     # volumes:
     #   - "./data/db/:/var/lib/docker/volumes"
-    ports:
-      - "28017:27017"
-# volumes:
-#   mongodata:
+    volumes:
+      - "mongodb_for_elliot_nodejs:/var/lib/docker/volumes/node-easy-notes-app_mongodb_for_elliot_nodejs/_data"
+volumes:
+  mongodb_for_elliot_nodejs:

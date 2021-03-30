@@ -1,12 +1,12 @@
-const Note = require("../models/note.model.js");
+const Note = require("../models/user.model.js");
 
 // Create and Save a new Note
 exports.create = (req, res) => {
-  console.log(req);
+  console.log("NODEJS_ELLIOT: 'create' triggered");
   // Validate request
   if (!req.body.content) {
     return res.status(400).send({
-      message: req.body.content//"Note content can not be empty",
+      message: "Note content can not be empty",
     });
   }
 
@@ -31,6 +31,7 @@ exports.create = (req, res) => {
 
 // Retrieve and return all notes from the database.
 exports.findAll = (req, res) => {
+  console.log("NODEJS_ELLIOT: findAll triggered");
   Note.find()
     .then((notes) => {
       res.send(notes);
@@ -43,10 +44,88 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single note with a noteId
-exports.findOne = (req, res) => {};
+exports.findOne = (req, res) => {
+  console.log("NODEJS_ELLIOT: 'findOne' triggered");
+  Note.findById(req.params.noteId)
+    .then((note) => {
+      if (!note) {
+        return res.status(404).send({
+          message: "Note not found with id " + req.params.noteId,
+        });
+      }
+      res.send(note);
+    })
+    .catch((err) => {
+      if (err.kind === "ObjectId") {
+        return res.status(404).send({
+          message: "Note not found with id " + req.params.noteId,
+        });
+      }
+      return res.status(500).send({
+        message: "Error retrieving note with id " + req.params.noteId,
+      });
+    });
+};
 
 // Update a note identified by the noteId in the request
-exports.update = (req, res) => {};
+exports.update = (req, res) => {
+  console.log("NODEJS_ELLIOT: 'update' triggered");
+  // Validate Request
+  if (!req.body.content) {
+    return res.status(400).send({
+      message: "Note content can not be empty",
+    });
+  }
+
+  // Find note and update it with the request body
+  Note.findByIdAndUpdate(
+    req.params.noteId,
+    {
+      title: req.body.title || "Untitled Note",
+      content: req.body.content,
+    },
+    { new: true }
+  )
+    .then((note) => {
+      if (!note) {
+        return res.status(404).send({
+          message: "Note not found with id " + req.params.noteId,
+        });
+      }
+      res.send(note);
+    })
+    .catch((err) => {
+      if (err.kind === "ObjectId") {
+        return res.status(404).send({
+          message: "Note not found with id " + req.params.noteId,
+        });
+      }
+      return res.status(500).send({
+        message: "Error updating note with id " + req.params.noteId,
+      });
+    });
+};
 
 // Delete a note with the specified noteId in the request
-exports.delete = (req, res) => {};
+exports.delete = (req, res) => {
+  console.log("NODEJS_ELLIOT: 'delete' triggered");
+  Note.findByIdAndRemove(req.params.noteId)
+    .then((note) => {
+      if (!note) {
+        return res.status(404).send({
+          message: "Note not found with id " + req.params.noteId,
+        });
+      }
+      res.send({ message: "Note deleted successfully!" });
+    })
+    .catch((err) => {
+      if (err.kind === "ObjectId" || err.name === "NotFound") {
+        return res.status(404).send({
+          message: "Note not found with id " + req.params.noteId,
+        });
+      }
+      return res.status(500).send({
+        message: "Could not delete note with id " + req.params.noteId,
+      });
+    });
+};
