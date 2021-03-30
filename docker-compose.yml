@@ -14,7 +14,7 @@ services:
     links:
       - mongo
   mongo:
-    container_name: mongo
+    container_name: mongodd
     image: mongo
     ports:
       - "28017:27017"

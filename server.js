@@ -19,7 +19,7 @@ mongoose.Promise = global.Promise;
 
 function mongoUrl(port) {
   if (isDocker()) {
-    return "mongodb://mongo:" + port + "/easy-notes";
+    return "mongodb://mongodd:" + port + "/easy-notes";
   }
 
   return "mongodb://localhost:" + port + "/easy-notes";
