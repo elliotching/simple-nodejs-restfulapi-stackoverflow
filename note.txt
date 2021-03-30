@@ -1,17 +1,56 @@
 docker command cli
 
+docker-compose up
+
+docker tag elliot-nodejs elliotching/elliot-nodejs
+
+docker push elliotching/elliot-nodejs
+
+docker tag mongo elliotching/elliot-mongodb
+
+docker push elliotching/elliot-nodejs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 docker build -t nodejs-elliot .
 
 docker run --rm -p 8080:3000 --name xxx1 nodejs-elliot 
 
-docker volume create mongodb
-docker volume create mongodb_config
+docker volume create mongodb001
+docker volume create mongodb001_config
 
 
 docker network create mongodb
 
 
 docker run -it --rm -d -v mongodb:/data/db -v mongodb_config:/data/configdb -p 27017:27017 --network mongodb mongo
+
+docker run -it --rm -d -v /data/db:/data/db -v /data/configdb:mongodb_config001  mongo
 
 
 docker run -it --rm -d --network mongodb -p 8081:8081 -e SERVER_PORT=8081 -e SERVER_PORT=8081 -e DATABASE_CONNECTIONSTRING=mongodb://mongodb:27017/easy-notes --name xxx nodejs-elliot

@@ -1,17 +1,31 @@
-version: "3"
+version: "3.6"
 services:
-       easy-notes-app:
-           container_name: nodejs-elliot
-           image: elliot/nodejs
-           restart: always
-           build: .
-           ports:
-             - "3003:3000"
-           links:
-             - mongo
-       mongo:
-             container_name: mongo
-             image: mongo
-             
-             ports:
-               - '27017:27017'
+  easy-notes-app:
+    container_name: nodejs-elliot
+    image: elliotching/elliot-nodejs
+    restart: always
+    build: .
+    # volumes: 
+    #   - type: bind
+    #     source: d:/data/db
+    #     target: /data/db
+    ports:
+      - "3003:3000"
+    links:
+      - mongo
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    # volumes: 
+    #   - type: bind
+    #     source: d:/data/db
+    #     target: /var/lib/docker/volumes/mongodata
+    # volumes:
+    #   - "D:\\data\\db\\:/var/lib/docker/volumes/node-easy-notes-app_mongodata/"
+    # volumes:
+    #   - "./data/db/:/var/lib/docker/volumes"
+    ports:
+      - "28017:27017"
+# volumes:
+#   mongodata:
