@@ -34,4 +34,4 @@ const UserSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("UserSchema", UserSchema); // UserSchema <-- name of collection (aka. table) (auto small-letterize)

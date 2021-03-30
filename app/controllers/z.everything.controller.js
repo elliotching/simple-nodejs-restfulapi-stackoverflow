@@ -1,14 +1,14 @@
-const User = requestuire("../users/user.model.js");
+const User = require("../users/user.model.js");
 
 // Create and Save a new Note
-exports.register = (request, res) => {
+exports.register = (request, response) => {
   // Validate requestuest
   if (!request.body.username) {
-    return res.status(403).send({
+    return response.status(403).send({
       message: "Failed",
     });
   }
-  User.findOne({username:request.body.username})
+  User.findOne({ username: request.body.username })
     .then((usernameFound) => {
       // console.log("Found!\n");
       // console.log(usernameFound);
@@ -20,61 +20,94 @@ exports.register = (request, res) => {
           displayusername: request.body.displayusername,
         });
 
-        return saveUser(user, res);
+        return user // Save
+          .save()
+          .then((data) => {
+            data.updateOne(
+              { password: "customizedpassword" },
+              // {},
+              function (err, docs) {
+                if (err) {
+                  return response.status(403).send({
+                    message: "Failed",
+                  });
+                } else {
+                  return response.send({
+                    message: "Created user" + data.username,
+                  });
+                }
+              }
+            );
+            // .then((data02) => {
+            //   console.log(data02);
+            //   response.send(data02);
+            // })
+            // .catch((err) => {
+            //   response.status(500).send({
+            //     message:
+            //       err.message ||
+            //       "Some error occurred while creating the User.",
+            //   });
+            // });
+          })
+          .catch((err) => {
+            response.status(500).send({
+              message:
+                err.message || "Some error occurred while creating the User.",
+            });
+          });
       }
-      res.status(500).send({
+      response.status(500).send({
         message: request.body.username + " existed. Do you want to sign in?",
       });
     })
     .catch((err) => {
-      res.status(500).send({
+      response.status(500).send({
         message: err.message || "Some error occurred while creating the User.",
       });
     });
 };
 
-const saveUser = (user, res) => {
-  // Save User in the database
-  user
-    .save()
+// Retrieve and return all notes from the database.
+exports.findAll = (request, response) => {
+  User.find()
     .then((data) => {
-      response.send({
-        username: data.username,
-        displayusername: data.displayusername,
-      });
+      response.send(data);
     })
     .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating the User.",
+      response.status(500).send({
+        message: err.message || "Some error occurred while retrieving notes.",
       });
     });
 };
 
-// // Retrieve and return all notes from the database.
-// exports.findAll = (request, res) => {
-//   User.find()
-//     .then((notes) => {
-//       res.send(notes);
-//     })
-//     .catch((err) => {
-//       res.status(500).send({
-//         message: err.message || "Some error occurred while retrieving notes.",
-//       });
-//     });
-// };
+// Retrieve and return all notes from the database.
+exports.aaaaa = (request, response) => {
+  // User.deleteMany()
+  //   .then((data) => {
+  //     response.send(data);
+  //   })
+  //   .catch((err) => {
+  //     response.status(500).send({
+  //       message: err.message || "Some error occurred while retrieving notes.",
+  //     });
+  //   });
+};
+
+// const saveUser =
 
 // // Find a single note with a noteId
-// exports.findOne = (request, res) => {};
+// exports.findOne = (request, response) => {};
 
 // // Update a note identified by the noteId in the requestuest
-// exports.update = (request, res) => {};
+// exports.update = (request, response) => {};
 
 // // Delete a note with the specified noteId in the requestuest
-// exports.delete = (request, res) => {};
+// exports.delete = (request, response) => {};
 // // 404 not found
-// exports.unknown = (request, res) => {
+// exports.unknown = (request, response) => {
 
-//     return res.status(404).send({
+//     return response.status(404).send({
 //       message: "Failed",
 //     });
 // };
