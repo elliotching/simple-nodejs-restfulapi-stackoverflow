@@ -11,31 +11,39 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Configuring the database
-const dbConfig = require("./config/database.config.js");
+// const dbConfig = require("./config/database.config.js");
 const mongoose = require("mongoose");
+const isDocker = require("is-docker");
 
 mongoose.Promise = global.Promise;
 
-var url = "mongodb://mongo:28017/easy-notes";
+function mongoUrl(port) {
+  if (isDocker()) {
+    return "mongodb://mongo:" + port + "/easy-notes";
+  }
+
+  return "mongodb://localhost:" + port + "/easy-notes";
+}
 // Connecting to the database
-console.log("Connecting to the database\n" + url);
+console.log("Connecting to the database\n");
 mongoose
-  .connect(url, {
+  .connect(mongoUrl("28017"), {
     useNewUrlParser: true,
   })
   .then(() => {
-    console.log("Successfully connected to the database\n" + url);
+    console.log("Successfully connected to the database\n" + mongoUrl("28017"));
   })
   .catch((err) => {
     console.log("Could not connect to the database. Exiting now...\n", err);
     console.log("Retry in port 27017...");
-    url = "mongodb://mongo:27017/easy-notes";
     mongoose
-      .connect("mongodb://mongo:27017/easy-notes", {
+      .connect(mongoUrl("27017"), {
         useNewUrlParser: true,
       })
       .then(() => {
-        console.log("Successfully connected to the database\n" + url);
+        console.log(
+          "Successfully connected to the database\n" + mongoUrl("27017")
+        );
       })
       .catch((err) => {
         console.log("Could not connect to the database. Exiting now...\n", err);
