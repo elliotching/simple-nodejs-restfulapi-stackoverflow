@@ -1,49 +1,114 @@
 const User = require("../users/user.model.js");
 const uuid = require("uuid");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
+const base64 = (text) => {
+    return Buffer.from(text).toString("base64");
+};
+const trim = (text) => {
+    return text.replace(/=/g, "");
+};
 const hash = (text) => {
     return crypto.createHash("sha256").update(text).digest("hex");
 };
-const jwt = require("jsonwebtoken");
+const hashHmac = (text, key) => {
+    return crypto.createHmac("sha256", key).update(text).digest("base64");
+};
+const jsonStringOf = (json) => {
+    return JSON.stringify(json);
+};
+const defJwt = () => {
+    return jwt.sign({ foo: "bar" }, "shhhhh");
+};
 const unknownError = "Some error occurred while creating the User.";
-// Create and Save a new Note
+// JWT signed by elliot
+// JWT signed by elliot
+// YES! by ELLIOT!!
+let jwtSign = (payload, secretKey) => {
+    return new Promise((resolve, reject) => {
+        let defaultHeader = base64(
+            jsonStringOf({
+                alg: "HS256",
+                typ: "JWT",
+            })
+        );
+
+        let payloadString = base64(jsonStringOf(payload));
+
+        let sign = (h, p, key) => {
+            return new Promise((resolve, reject) => {
+                let finalSign = hashHmac(h + "." + trim(p), key);
+                if (finalSign || finalSign !== "") {
+                    resolve(trim(h) + "." + trim(p) + "." + finalSign);
+                } else {
+                    reject(false);
+                }
+            });
+        };
+        sign(defaultHeader, payloadString, secretKey)
+            .then((sign) => {
+                // return sign;
+                resolve(sign);
+            })
+            .catch((e) => {
+                // throw e;
+                reject(e);
+            });
+    });
+};
 exports.register = (request, response) => {
     // return modifyUseridUuid(null, response);
     // Validate requestuest
-    return response.send({
-        message: jwt.sign({ foo: "bar" }, "shhhhh"),
-    });
-    if (!request.body.username) {
-        return response.status(403).send({
-            message: "Failed",
-        });
-    }
-    User.findOne({ username: request.body.username })
-        .then((usernameFound) => {
-            // console.log("Found!\n");
-            // console.log(usernameFound);
-            if (!usernameFound) {
-                // Create a User
-                const user = new User({
-                    username: request.body.username,
-                    password: request.body.password,
-                    displayusername: request.body.displayusername,
-                    userid: "TODO: generate uuid",
-                    timestamp: request.body.timestamp,
-                });
-
-                return saveUserInfo(user, response);
-            }
-            response.status(500).send({
-                message:
-                    request.body.username + " existed. Do you want to sign in?",
+    jwtSign(request.body, "shhhhh")
+        .then((sign) => {
+            return response.send({
+                message: sign, //base64
+                // message: hashHmac("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIifQ"),
             });
         })
-        .catch((err) => {
-            response.status(500).send({
-                message: err.message || unknownError,
+        .catch((e) => {
+            return response.status(403).send({
+                message: e.message || "Failed", //base64
+                // message: hashHmac("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIifQ"),
             });
         });
+
+    // return response.send({
+    //     message: , //base64
+    //     // message: hashHmac("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIifQ"),
+    // });
+
+    // if (!request.body.username) {
+    //     return response.status(403).send({
+    //         message: "Failed",
+    //     });
+    // }
+    // User.findOne({ username: request.body.username })
+    //     .then((usernameFound) => {
+    //         // console.log("Found!\n");
+    //         // console.log(usernameFound);
+    //         if (!usernameFound) {
+    //             // Create a User
+    //             const user = new User({
+    //                 username: request.body.username,
+    //                 password: request.body.password,
+    //                 displayusername: request.body.displayusername,
+    //                 userid: "TODO: generate uuid",
+    //                 timestamp: request.body.timestamp,
+    //             });
+
+    //             return saveUserInfo(user, response);
+    //         }
+    //         response.status(500).send({
+    //             message:
+    //                 request.body.username + " existed. Do you want to sign in?",
+    //         });
+    //     })
+    //     .catch((err) => {
+    //         response.status(500).send({
+    //             message: err.message || unknownError,
+    //         });
+    //     });
 };
 
 const saveUserInfo = (user, response) => {
