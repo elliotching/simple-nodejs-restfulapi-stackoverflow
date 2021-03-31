@@ -4,12 +4,15 @@ const crypto = require("crypto");
 const hash = (text) => {
     return crypto.createHash("sha256").update(text).digest("hex");
 };
-
+const jwt = require("jsonwebtoken");
 const unknownError = "Some error occurred while creating the User.";
 // Create and Save a new Note
 exports.register = (request, response) => {
     // return modifyUseridUuid(null, response);
     // Validate requestuest
+    return response.send({
+        message: jwt.sign({ foo: "bar" }, "shhhhh"),
+    });
     if (!request.body.username) {
         return response.status(403).send({
             message: "Failed",
