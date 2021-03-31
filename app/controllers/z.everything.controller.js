@@ -1,5 +1,9 @@
 const User = require("../users/user.model.js");
 const uuid = require("uuid");
+const crypto = require("crypto");
+const hash = (text) => {
+    return crypto.createHash("sha256").update(text).digest("hex");
+};
 
 const unknownError = "Some error occurred while creating the User.";
 // Create and Save a new Note
@@ -42,8 +46,8 @@ exports.register = (request, response) => {
 const saveUserInfo = (user, response) => {
     user.save() // Save
         .then((data) => {
-            modifyPasswordHashing(data)
-                .then((_) => generateUuid())
+            generateUuid(data)
+                .then((finalUuid) => modifyPasswordHashing(data, finalUuid))
                 .then((finalUuid) => modifyUseridUuid(data, finalUuid))
                 .then((_) => {
                     return response.send({
@@ -63,11 +67,12 @@ const saveUserInfo = (user, response) => {
         });
 };
 
-const modifyPasswordHashing = (data) => {
+const modifyPasswordHashing = (data, uuid) => {
     // TODO: get id and hashing password
+    var hashedPassword = hash(data.password + data._id);
     return new Promise((resolve, reject) => {
         data.updateOne(
-            { password: "customizedpassword" },
+            { password: hashedPassword },
             // {},
             (err) => {
                 if (err) {
@@ -76,7 +81,7 @@ const modifyPasswordHashing = (data) => {
                             " or Failed to update password with customized/hashed password"
                     );
                 } else {
-                    resolve(data);
+                    resolve(uuid);
                 }
             }
         );
@@ -102,7 +107,6 @@ const generateUuid = () => {
 
 const modifyUseridUuid = (user, newUuid) => {
     return new Promise((resolve, reject) => {
-        console.log("modifyUseridUuid");
         user.updateOne({ userid: newUuid }, (err, data) => {
             if (err) {
                 reject("unknown error while insrting new uuid");
@@ -123,6 +127,65 @@ const jeffBuysCake = (cakeType) => {
         }, 1000);
     });
 };
+
+exports.loginUser = (request, response) => {
+    let searchUsername = () => {
+        return new Promise((resolve, reject) => {
+            User.findOne({ username: request.body.username })
+                .then((user) => {
+                    if (!user) {
+                        // sign up
+                        resolve(false);
+                    } else {
+                        resolve(user);
+                        // success
+                    }
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+    };
+    let verifyPassword = (user) => {
+        return new Promise((resolve, reject) => {
+            try {
+                let hashedPassword = hash(request.body.password + user._id);
+                if (user.password === hashedPassword) {
+                    resolve(user);
+                } else {
+                    reject("Failed");
+                }
+            } catch (e) {
+                reject(e);
+            }
+        });
+    };
+    let generateToken = (user) => {
+        return new Promise((resolve, reject) => {
+            // TODO: jwt implementation
+            if (user.password === request.body.password) {
+                resolve("temp:token");
+            }
+        });
+    };
+    //LOGINNNNNNNNNNNN
+    searchUsername()
+        .then((user) => verifyPassword(user))
+        .then(() => {
+            return response.status(200).send({
+                message: "success",
+            });
+        })
+        .catch((error) => {
+            return response.status(500).send({
+                message:
+                    error ||
+                    error.message ||
+                    "Some error occurred while retrieving notes.",
+            });
+        });
+};
+
 // Retrieve and return all notes from the database.
 exports.findAll = (request, response) => {
     User.find()
@@ -141,19 +204,37 @@ exports.findAll = (request, response) => {
 
 // Retrieve and return all notes from the database.
 exports.aaaaa = (request, response) => {
-    User.deleteMany({}, {}, (err) => {
-        response.send(err.message);
-        // response.send("deleted all");
-    });
-    //   .then((data) => {
-    //     response.send(data);
-    //   })
-    //   .catch((err) => {
-    //     response.status(500).send({
-    //       message: err.message || "Some error occurred while retrieving notes.",
-    //     });
-    //   });
+    let deleteeveryone = () => {
+        return new Promise((resolve, reject) => {
+            User.deleteMany({}, {}, (err) => {
+                reject(err);
+            });
+            resolve(true);
+        });
+    };
+
+    deleteeveryone()
+        .then(() => {
+            return response.status(200).send({
+                message: "success",
+            });
+        })
+        .catch((err) => {
+            return response.status(500).send({
+                message:
+                    err.message ||
+                    "Some error occurred while retrieving notes.",
+            });
+        });
 };
+
+// const deleteeveryone = new Promise((resolve, reject) => {
+//   User.deleteMany({}, {}, (err) => {
+//       reject(err);
+//       // response.send("deleted all");
+//   });
+//   resolve(true);
+// });
 
 // const saveUser =
 
