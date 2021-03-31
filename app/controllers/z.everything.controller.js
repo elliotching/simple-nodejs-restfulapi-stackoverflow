@@ -214,10 +214,10 @@ exports.loginUser = (request, response) => {
       }
     });
   };
-  let saveJwt = (jwt) => {
+  let saveJwt = (user,jwt) => {
     return new Promise((resolve, reject) => {
       resolve({
-        token: sign,
+        token: jwt,
         displayusername: user.displayusername,
         userid: user.userid,
       });
@@ -238,7 +238,7 @@ exports.loginUser = (request, response) => {
         "shhhhh"
       )
     )
-    .then((jwt) => saveJwt(jwt))
+    .then((user,jwt) => saveJwt(user,jwt))
     .then((loginResponse) => {
       return response.status(200).send(loginResponse);
     })
