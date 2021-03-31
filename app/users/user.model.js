@@ -29,6 +29,14 @@ const UserSchema = mongoose.Schema(
       }),
       // validate: mongoose_validate("len", 4, 200),
     },
+    userid: {
+      type: String,
+      required: true,
+    },
+    timestamp: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

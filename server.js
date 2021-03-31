@@ -19,14 +19,14 @@ mongoose.Promise = global.Promise;
 
 function mongoUrl(port) {
   if (isDocker()) {
-    return "mongodb://mongodd:" + port + "/easy-notes";
+    return "mongodb://mongodd:" + port + "/db_nodejs_user_cars";
   }
 
-  return "mongodb://localhost:" + port + "/easy-notes";
+  return "mongodb://localhost:" + port + "/db_nodejs_user_cars";
 }
 // Connecting to the database
 console.log("Connecting to the database\n");
-
+console.log("Connecting to the database\n");
 mongoose
   .connect(mongoUrl("27017"), {
     useNewUrlParser: true,
@@ -75,7 +75,7 @@ app.get("/", (req, res) => {
 // Require Notes routes
 // require('./app/routes/full.routes.js')(app);
 
-require("./app/routes/note.routes.js")(app);
+require("./app/routes/routes.js")(app);
 
 // listen for requests
 app.listen(3000, () => {

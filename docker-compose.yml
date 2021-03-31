@@ -11,11 +11,16 @@ services:
     #     target: /data/db
     ports:
       - "3003:3000"
+    # volumes:
+    #   - mongodb_for_elliot_nodejs:/data/db
     links:
-      - mongo
-  mongo:
+      - mongodd
+    depends_on:
+      - mongodd
+  mongodd:
     container_name: mongodd
     image: mongo
+    # network_mode: host
     ports:
       - "28017:27017"
     # volumes: 
@@ -26,7 +31,7 @@ services:
     #   - "D:\\data\\db\\:/var/lib/docker/volumes/node-easy-notes-app_mongodata/"
     # volumes:
     #   - "./data/db/:/var/lib/docker/volumes"
-    volumes:
-      - "mongodb_for_elliot_nodejs:/var/lib/docker/volumes/node-easy-notes-app_mongodb_for_elliot_nodejs/_data"
-volumes:
-  mongodb_for_elliot_nodejs:
+    # volumes:
+    #   - mongodb_for_elliot_nodejs:/data/db
+# volumes:
+#   mongodb_for_elliot_nodejs:
