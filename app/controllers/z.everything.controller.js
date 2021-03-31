@@ -37,7 +37,7 @@ let jwtSign = (payload, secretKey) => {
 
         let sign = (h, p, key) => {
             return new Promise((resolve, reject) => {
-                let finalSign = hashHmac(h + "." + trim(p), key);
+                let finalSign = hashHmac(trim(h) + "." + trim(p), key);
                 if (finalSign || finalSign !== "") {
                     resolve(trim(h) + "." + trim(p) + "." + finalSign);
                 } else {
