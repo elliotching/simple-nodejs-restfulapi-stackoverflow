@@ -1,6 +1,7 @@
 const User = require("../users/user.model.js");
 const uuid = require("uuid");
 const crypto = require("crypto");
+const secretkeyjwt = "fsp!hzbU@_^gZ8mvfAn2";
 const jwt = require("jsonwebtoken");
 const base64 = (text) => {
   return Buffer.from(text).toString("base64");
@@ -18,7 +19,7 @@ const jsonStringOf = (json) => {
   return JSON.stringify(json);
 };
 const defJwt = () => {
-  return jwt.sign({ foo: "bar" }, "shhhhh");
+  return jwt.sign({ foo: "bar" }, secretkeyjwt);
 };
 const unknownError = "Some error occurred while creating the User.";
 // JWT signed by elliot
@@ -262,7 +263,7 @@ exports.loginUser = (request, response) => {
           userid: user.userid,
           timestamp: request.body.timestamp,
         },
-        "shhhhh"
+        secretkeyjwt
       )
     )
     .then((user) => saveJwt(user))
