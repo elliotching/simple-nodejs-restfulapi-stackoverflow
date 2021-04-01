@@ -1,5 +1,5 @@
 const User = require("../users/user.model.js");
-const Cars = require("../car/car.model.js");
+const Car = require("../car/car.model.js");
 const uuid = require("uuid");
 const crypto = require("crypto");
 const secretkeyjwt = "fsp!hzbU@_^gZ8mvfAn2";
@@ -469,7 +469,7 @@ exports.updateprofileuser = (request, response) => {
     });
 };
 
-exports.cars = (request, response) => {
+exports.carlist = (request, response) => {
   return new Promise((resolve, reject) => {
     var requestBody = Object.keys(request);
     if (requestBody.length >= 3) {
@@ -495,10 +495,16 @@ exports.cars = (request, response) => {
     })
     .then((success) => {
       return new Promise((resolve, reject) => {
-        Cars.find((err, car) => {
+        Car.find(                       {
+          occupation: "",
+          name: 'Ghost',
+          age: { $gt: 17, $lt: 66 },
+          likes: { $in: ['vaporizing', 'talking'] }
+        },(err, car) => {
           if (err) reject(err);
           if (car) resolve(car);
-        });
+        })
+        .sort({ id: "ascending" });
       });
     })
     .then((carsss) => {
@@ -512,45 +518,55 @@ exports.cars = (request, response) => {
   // .then()
 };
 
-exports.cars = (request, response) => {
-  return new Promise((resolve, reject) => {
-    var requestBody = Object.keys(request);
-    if (requestBody.length >= 3) {
-      // TODO: loop
-      resolve(true);
-    } else {
-      reject(false);
-    }
-  })
-    .then((success) => {
-      // GET VALIDATION TOKEN FROM REQUEST (aka. JWT)
-      return new Promise((resolve, reject) => {
-        if (success) {
-          let validationToken = "";
-          validationToken = request.header("authorization").split(" ")[1];
-          if (validationToken) {
-            resolve(validationToken);
-          } else {
-            reject(false);
-          }
-        }
-      });
-    })
-    .then((success) => {
-      return new Promise((resolve, reject) => {
-        Cars.find((err, car) => {
-          if (err) reject(err);
-          if (car) resolve(car);
+exports.carsave = (request, response) => {
+  return (
+    new Promise((resolve, reject) => {
+      let 
+      for (let index = n; index < n+100; index++) {
+        let car = new Car({
+          id: ("000" + index).slice(-4),
+          carname: "Car name " + ("000" + index).slice(-4),
+          brand: "Car brand " + ("000" + index).slice(-4),
+          description:
+            "Car of " +
+            ("000" + index).slice(-4) +
+            " is a brand new car. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          // variance: [{ id: String, name: String, price: String }],
         });
-      });
+        car.save();
+      }
+      resolve(true);
     })
-    .then((carsss) => {
-      return response.send(carsss);
-    })
-    .catch((err) => {
-      return response.status(403).send({
-        message: err.message || err || "Failed",
-      });
-    });
+      // .then((success) => {
+      //   // GET VALIDATION TOKEN FROM REQUEST (aka. JWT)
+      //   return new Promise((resolve, reject) => {
+      //     if (success) {
+      //       let validationToken = "";
+      //       validationToken = request.header("authorization").split(" ")[1];
+      //       if (validationToken) {
+      //         resolve(validationToken);
+      //       } else {
+      //         reject(false);
+      //       }
+      //     }
+      //   });
+      // })
+      // .then((success) => {
+      //   return new Promise((resolve, reject) => {
+      //     Cars.find((err, car) => {
+      //       if (err) reject(err);
+      //       if (car) resolve(car);
+      //     });
+      //   });
+      // })
+      .then((carsss) => {
+        return response.send("success");
+      })
+      .catch((err) => {
+        return response.status(403).send({
+          message: err.message || err || "Failed",
+        });
+      })
+  );
   // .then()
 };
