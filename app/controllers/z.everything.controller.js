@@ -58,6 +58,40 @@ let jwtSign = (user, payload, secretKey) => {
       });
   });
 };
+
+const findToken = (token) => {
+  return new Promise((resolve, reject) => {
+    User.findOne({ token: token }, (err, data) => {
+      if (err) {
+        reject(err);
+      }
+      if (data) {
+        resolve(data);
+      } else {
+        reject("token not found");
+      }
+    });
+  });
+};
+
+const update = (condition, toUpdate) => {
+  return new Promise((resolve, reject) => {
+    User.findOneAndUpdate(
+      condition, //{ username: user.username }
+      toUpdate, //{ token: user.token },
+      (err, data) => {
+        if (err) {
+          reject(
+            err.message +
+              " or Failed to update password with customized/hashed password"
+          );
+        } else {
+          resolve(data);
+        }
+      }
+    );
+  });
+};
 exports.register = (request, response) => {
   // return modifyUseridUuid(null, response);
   // Validate requestuest
@@ -233,7 +267,7 @@ exports.loginUser = (request, response) => {
             }
           }
         );
-        
+
         resolve(user);
       });
     };
@@ -314,6 +348,35 @@ exports.aaaaa = (request, response) => {
     .catch((err) => {
       return response.status(500).send({
         message: err.message || "Some error occurred while retrieving notes.",
+      });
+    });
+};
+
+exports.logout = (request, response) => {
+  var requestBody = Object.keys(request.body);
+  if (requestBody.length == 1 && requestBody[0] == "timestamp") {
+
+  }else{
+    return response.status(403).send({
+      message: "Failed",
+    });
+  }
+  let validationToken = "";
+  validationToken = request.header("authorization").split(" ")[1];
+
+  findToken(validationToken)
+    .then((data) => update({ username: data.username }, { token: "" }))
+    .then((data) => {
+      return response.send({
+        message: "logged out",
+      });
+    })
+    .catch((err) => {
+      // return response.send({
+      //   message: requestBody,
+      // });
+      return response.status(403).send({
+        message: err.message || err || "Failed",
       });
     });
 };

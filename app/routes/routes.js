@@ -23,6 +23,7 @@ module.exports = (app) => {
     // Create a new Note
     app.post('/api/register', controlApi.register);
     app.post('/api/session/login', controlApi.loginUser);
+    app.post('/api/session/logout', controlApi.logout);
     // Create a new Note
     app.post('/clearuser', controlApi.aaaaa);
     // Retrieve all Notes
