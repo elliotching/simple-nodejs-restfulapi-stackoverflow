@@ -77,7 +77,29 @@ app.get("/", (req, res) => {
 
 require("./app/routes/routes.js")(app);
 
+// let ssss = (...args) => {
+//   console.log(args);
+// };
+// ssss("","","");
 // listen for requests
+
+// let a = ["1","2","3","3","4","4"]
+// let b = ["5","6","7","5","4","5"]
+// a.forEach((aa, i) => {
+//   let foundOfEach = false;
+//   console.log(aa);
+//   b.forEach((bb, j) => {
+//     if (aa == bb) {
+//       foundOfEach = true;
+//       continue;
+//     }
+    
+//     console.log(foundOfEach);
+    
+//   });
+// });
+
+// return;
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
 });

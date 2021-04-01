@@ -1,4 +1,5 @@
 const User = require("../users/user.model.js");
+const Cars = require("../car/car.model.js");
 const uuid = require("uuid");
 const crypto = require("crypto");
 const secretkeyjwt = "fsp!hzbU@_^gZ8mvfAn2";
@@ -21,7 +22,7 @@ const jsonStringOf = (json) => {
 const defJwt = () => {
   return jwt.sign({ foo: "bar" }, secretkeyjwt);
 };
-const unknownError = "Some error occurred while creating the User.";
+const unknownError = "Failed";
 // JWT signed by elliot
 // JWT signed by elliot
 // YES! by ELLIOT!!
@@ -59,7 +60,7 @@ let jwtSign = (user, payload, secretKey) => {
   });
 };
 
-const findToken = (token) => {
+const validateToken = (token) => {
   return new Promise((resolve, reject) => {
     User.findOne({ token: token }, (err, data) => {
       if (err) {
@@ -81,10 +82,7 @@ const update = (condition, toUpdate) => {
       toUpdate, //{ token: user.token },
       (err, data) => {
         if (err) {
-          reject(
-            err.message +
-              " or Failed to update password with customized/hashed password"
-          );
+          reject(err.message);
         } else {
           resolve(data);
         }
@@ -165,10 +163,7 @@ const modifyPasswordHashing = (data, uuid) => {
       // {},
       (err) => {
         if (err) {
-          reject(
-            err.message +
-              " or Failed to update password with customized/hashed password"
-          );
+          reject(err.message);
         } else {
           resolve(uuid);
         }
@@ -220,6 +215,9 @@ const jeffBuysCake = (cakeType) => {
 exports.loginUser = (request, response) => {
   let searchUsername = () => {
     return new Promise((resolve, reject) => {
+      if (!request.body.username) {
+        reject(false);
+      }
       User.findOne({ username: request.body.username })
         .then((user) => {
           if (!user) {
@@ -238,6 +236,9 @@ exports.loginUser = (request, response) => {
   let verifyPassword = (user) => {
     return new Promise((resolve, reject) => {
       try {
+        if (!request.body.password) {
+          reject(false);
+        }
         let hashedPassword = hash(request.body.password + user._id);
         if (user.password === hashedPassword) {
           resolve(user);
@@ -258,10 +259,7 @@ exports.loginUser = (request, response) => {
           { token: user.token },
           (err) => {
             if (err) {
-              reject(
-                err.message +
-                  " or Failed to update password with customized/hashed password"
-              );
+              reject(err.message);
             } else {
               resolve(user);
             }
@@ -287,7 +285,8 @@ exports.loginUser = (request, response) => {
   };
 
   //LOGINNNNNNNNNNNN
-  searchUsername()
+  checkLengthReq(request.body, 3)
+    .then((_) => searchUsername())
     .then((user) => verifyPassword(user))
     .then((user) =>
       jwtSign(
@@ -306,10 +305,7 @@ exports.loginUser = (request, response) => {
     })
     .catch((error) => {
       return response.status(500).send({
-        message:
-          error.message ||
-          error ||
-          "Some error occurred while retrieving notes.",
+        message: error.message || error || unknownError,
       });
     });
 };
@@ -323,7 +319,7 @@ exports.findAll = (request, response) => {
     })
     .catch((err) => {
       response.status(500).send({
-        message: err.message || "Some error occurred while retrieving notes.",
+        message: error.message || error || unknownError,
       });
     });
 };
@@ -347,7 +343,7 @@ exports.aaaaa = (request, response) => {
     })
     .catch((err) => {
       return response.status(500).send({
-        message: err.message || "Some error occurred while retrieving notes.",
+        message: err.message || err || unknownError,
       });
     });
 };
@@ -355,8 +351,7 @@ exports.aaaaa = (request, response) => {
 exports.logout = (request, response) => {
   var requestBody = Object.keys(request.body);
   if (requestBody.length == 1 && requestBody[0] == "timestamp") {
-
-  }else{
+  } else {
     return response.status(403).send({
       message: "Failed",
     });
@@ -364,7 +359,7 @@ exports.logout = (request, response) => {
   let validationToken = "";
   validationToken = request.header("authorization").split(" ")[1];
 
-  findToken(validationToken)
+  validateToken(validationToken)
     .then((data) => update({ username: data.username }, { token: "" }))
     .then((data) => {
       return response.send({
@@ -380,29 +375,182 @@ exports.logout = (request, response) => {
       });
     });
 };
+function checkLengthReq(req, requiredLength) {
+  return new Promise((resolve, reject) => {
+    var requestBody = Object.keys(req);
+    if (requestBody.length == requiredLength) {
+      // TODO: loop
+      resolve(true);
+    } else {
+      reject(false);
+    }
+  });
+}
+exports.getprofileuser = (request, response) => {
+  checkLengthReq(request.body, 1)
+    .then((success) => {
+      // GET VALIDATION TOKEN FROM REQUEST (aka. JWT)
+      return new Promise((resolve, reject) => {
+        if (success) {
+          let validationToken = "";
+          validationToken = request.header("authorization").split(" ")[1];
+          if (validationToken) {
+            resolve(validationToken);
+          } else {
+            reject(false);
+          }
+        }
+      });
+    })
+    .then((validationToken) => validateToken(validationToken))
+    .then((data) => {
+      return response.send({
+        username: data.username,
+        userid: data.userid,
+        displayusername: data.displayusername,
+      });
+    })
+    .catch((err) => {
+      return response.status(403).send({
+        message: "Failed",
+      });
+    });
+};
 
-// const deleteeveryone = new Promise((resolve, reject) => {
-//   User.deleteMany({}, {}, (err) => {
-//       reject(err);
-//       // response.send("deleted all");
-//   });
-//   resolve(true);
-// });
+exports.updateprofileuser = (request, response) => {
+  // "displayusername": "change my name",
+  // "timestamp": "2019-11-22T02:11:22.0000Z"
+  if (!request.body.displayusername) {
+    return response.status(403).send({
+      message: "Failed",
+    });
+  }
+  checkLengthReq(request.body, 2)
+    .then((success) => {
+      // GET VALIDATION TOKEN FROM REQUEST (aka. JWT)
+      return new Promise((resolve, reject) => {
+        if (success) {
+          let validationToken = "";
+          validationToken = request.header("authorization").split(" ")[1];
+          if (validationToken) {
+            resolve(validationToken);
+          } else {
+            reject(false);
+          }
+        }
+      });
+    })
+    .then((validationToken) => validateToken(validationToken))
+    .then((user) =>
+      update(
+        { username: user.username },
+        { displayusername: request.body.displayusername }
+      )
+    )
+    .then((user) => {
+      return new Promise((resolve, reject) => {
+        User.findOne({ username: user.username }, (err, user) => {
+          if (err) reject(err);
+          if (user) resolve(user);
+        });
+      });
+    })
+    .then((data) => {
+      return response.send({
+        displayusername: data.displayusername,
+        username: data.username,
+        userid: data.userid,
+      });
+    })
+    .catch((err) => {
+      return response.status(403).send({
+        message: "Failed",
+      });
+    });
+};
 
-// const saveUser =
+exports.cars = (request, response) => {
+  return new Promise((resolve, reject) => {
+    var requestBody = Object.keys(request);
+    if (requestBody.length >= 3) {
+      // TODO: loop
+      resolve(true);
+    } else {
+      reject(false);
+    }
+  })
+    .then((success) => {
+      // GET VALIDATION TOKEN FROM REQUEST (aka. JWT)
+      return new Promise((resolve, reject) => {
+        if (success) {
+          let validationToken = "";
+          validationToken = request.header("authorization").split(" ")[1];
+          if (validationToken) {
+            resolve(validationToken);
+          } else {
+            reject(false);
+          }
+        }
+      });
+    })
+    .then((success) => {
+      return new Promise((resolve, reject) => {
+        Cars.find((err, car) => {
+          if (err) reject(err);
+          if (car) resolve(car);
+        });
+      });
+    })
+    .then((carsss) => {
+      return response.send(carsss);
+    })
+    .catch((err) => {
+      return response.status(403).send({
+        message: err.message || err || "Failed",
+      });
+    });
+  // .then()
+};
 
-// // Find a single note with a noteId
-// exports.findOne = (request, response) => {};
-
-// // Update a note identified by the noteId in the requestuest
-// exports.update = (request, response) => {};
-
-// // Delete a note with the specified noteId in the requestuest
-// exports.delete = (request, response) => {};
-// // 404 not found
-// exports.unknown = (request, response) => {
-
-//     return response.status(404).send({
-//       message: "Failed",
-//     });
-// };
+exports.cars = (request, response) => {
+  return new Promise((resolve, reject) => {
+    var requestBody = Object.keys(request);
+    if (requestBody.length >= 3) {
+      // TODO: loop
+      resolve(true);
+    } else {
+      reject(false);
+    }
+  })
+    .then((success) => {
+      // GET VALIDATION TOKEN FROM REQUEST (aka. JWT)
+      return new Promise((resolve, reject) => {
+        if (success) {
+          let validationToken = "";
+          validationToken = request.header("authorization").split(" ")[1];
+          if (validationToken) {
+            resolve(validationToken);
+          } else {
+            reject(false);
+          }
+        }
+      });
+    })
+    .then((success) => {
+      return new Promise((resolve, reject) => {
+        Cars.find((err, car) => {
+          if (err) reject(err);
+          if (car) resolve(car);
+        });
+      });
+    })
+    .then((carsss) => {
+      return response.send(carsss);
+    })
+    .catch((err) => {
+      return response.status(403).send({
+        message: err.message || err || "Failed",
+      });
+    });
+  // .then()
+};
