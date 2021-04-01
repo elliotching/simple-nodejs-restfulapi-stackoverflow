@@ -37,9 +37,14 @@ const UserSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    token: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,
   }
 );
+mongoose.set('useFindAndModify', false);
 module.exports = mongoose.model("UserSchema", UserSchema); // UserSchema <-- name of collection (aka. table) (auto small-letterize)

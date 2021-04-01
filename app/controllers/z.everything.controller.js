@@ -48,7 +48,8 @@ let jwtSign = (user, payload, secretKey) => {
     sign(defaultHeader, payloadString, secretKey)
       .then((sign) => {
         // return sign;
-        resolve(sign);
+        user.token = sign;
+        resolve(user);
       })
       .catch((e) => {
         // throw e;
@@ -63,36 +64,36 @@ exports.register = (request, response) => {
   //     message: , //base64
   //     // message: hashHmac("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIifQ"),
   // });
-  // if (!request.body.username) {
-  //     return response.status(403).send({
-  //         message: "Failed",
-  //     });
-  // }
-  // User.findOne({ username: request.body.username })
-  //     .then((usernameFound) => {
-  //         // console.log("Found!\n");
-  //         // console.log(usernameFound);
-  //         if (!usernameFound) {
-  //             // Create a User
-  //             const user = new User({
-  //                 username: request.body.username,
-  //                 password: request.body.password,
-  //                 displayusername: request.body.displayusername,
-  //                 userid: "TODO: generate uuid",
-  //                 timestamp: request.body.timestamp,
-  //             });
-  //             return saveUserInfo(user, response);
-  //         }
-  //         response.status(500).send({
-  //             message:
-  //                 request.body.username + " existed. Do you want to sign in?",
-  //         });
-  //     })
-  //     .catch((err) => {
-  //         response.status(500).send({
-  //             message: err.message || unknownError,
-  //         });
-  //     });
+  if (!request.body.username) {
+    return response.status(403).send({
+      message: "Failed",
+    });
+  }
+  User.findOne({ username: request.body.username })
+    .then((usernameFound) => {
+      // console.log("Found!\n");
+      // console.log(usernameFound);
+      if (!usernameFound) {
+        // Create a User
+        const user = new User({
+          username: request.body.username,
+          password: request.body.password,
+          displayusername: request.body.displayusername,
+          userid: "TODO: generate uuid",
+          token: "",
+          timestamp: request.body.timestamp,
+        });
+        return saveUserInfo(user, response);
+      }
+      response.status(500).send({
+        message: request.body.username + " existed. Do you want to sign in?",
+      });
+    })
+    .catch((err) => {
+      response.status(500).send({
+        message: err.message || unknownError,
+      });
+    });
 };
 
 const saveUserInfo = (user, response) => {
@@ -214,13 +215,39 @@ exports.loginUser = (request, response) => {
       }
     });
   };
-  let saveJwt = (user,jwt) => {
-    return new Promise((resolve, reject) => {
-      resolve({
-        token: jwt,
-        displayusername: user.displayusername,
-        userid: user.userid,
+  let saveJwt = (user) => {
+    let updateToken = () => {
+      return new Promise((resolve, reject) => {
+        User.findOneAndUpdate(
+          { username: user.username },
+          { token: user.token },
+          (err) => {
+            if (err) {
+              reject(
+                err.message +
+                  " or Failed to update password with customized/hashed password"
+              );
+            } else {
+              resolve(user);
+            }
+          }
+        );
+        
+        resolve(user);
       });
+    };
+    return new Promise((resolve, reject) => {
+      updateToken()
+        .then((_) => {
+          resolve({
+            token: user.token,
+            displayusername: user.displayusername,
+            userid: user.userid,
+          });
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   };
 
@@ -238,7 +265,7 @@ exports.loginUser = (request, response) => {
         "shhhhh"
       )
     )
-    .then((user,jwt) => saveJwt(user,jwt))
+    .then((user) => saveJwt(user))
     .then((loginResponse) => {
       return response.status(200).send(loginResponse);
     })
