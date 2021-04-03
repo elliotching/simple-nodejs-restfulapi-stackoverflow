@@ -1,3 +1,12 @@
+Video 01:
+https://youtu.be/EzggocjO5nI
+
+Video 02 (Docker):
+https://youtu.be/MQwGy2dQnf8
+
+
+
+
 docker command cli
 
 docker-compose up
