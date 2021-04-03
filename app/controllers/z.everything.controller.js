@@ -528,16 +528,6 @@ exports.carsave = (request, response) => {
       .then((_) => {
         return new Promise((resolve, reject) => {
           let n = 0;
-          // let carvariance = [];
-          // for (let index = 0; index < 2; index++) {
-          //   carvariance.push(
-          //     new {
-          //       id: ("000" + index).slice(-4),
-          //       name: "variance 00" + index,
-          //       price: 175000 + index * 200,
-          //     }()
-          //   );
-          // }
           for (let index = n; index < n + 100; index++) {
             let car = new CarSchema({
               id: ("000" + index).slice(-4),
