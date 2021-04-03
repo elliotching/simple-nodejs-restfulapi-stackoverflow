@@ -1,6 +1,7 @@
 const User = require("../users/user.model.js");
 const CarSchema = require("../car/car.model.js");
 const carnames = require("../car/carnamessss.js");
+const carbrands = require("../car/carbrandsssssss.js");
 const uuid = require("uuid");
 const crypto = require("crypto");
 const secretkeyjwt = "fsp!hzbU@_^gZ8mvfAn2";
@@ -249,10 +250,9 @@ exports.loginUser = (request, response) => {
         if (user.password === hashedPassword) {
           resolve(user);
         } else {
-          reject("user not exist");
+          reject(false);
         }
       } catch (e) {
-        console.log(e);
         reject(e);
       }
     });
@@ -478,7 +478,12 @@ exports.updateprofileuser = (request, response) => {
 exports.carlist = (request, response) => {
   return new Promise((resolve, reject) => {
     var requestBody = Object.keys(request);
-    if (requestBody.length >= 3) {
+    if (
+      requestBody.length >= 3 &&
+      request.body.carname != null &&
+      request.body.pageindex &&
+      request.body.pagesize
+    ) {
       // TODO: loop
       resolve(true);
     } else {
@@ -499,12 +504,26 @@ exports.carlist = (request, response) => {
         }
       });
     })
+    .then((token)=>validateToken(token))
     .then((success) => {
       return new Promise((resolve, reject) => {
-        CarSchema.find({}, (err, car) => {
-          if (err) reject(err);
-          if (car) resolve(car);
-        }).sort({ id: "ascending" });
+        let start = (request.body.pageindex - 1) * request.body.pagesize;
+        if (start <= -1) {
+          start = 0;
+        }
+        CarSchema.find(
+          request.body.carname == ""
+            ? {}
+            : { carname: new RegExp(request.body.carname, "i") }
+        )
+          .sort({ id: "ascending" })
+          .where("id")
+          .gte(("000" + start).slice(-4))
+          .limit(request.body.pagesize)
+          .exec((err, car) => {
+            if (err) reject(err);
+            if (car) resolve(car);
+          });
       });
     })
     .then((carsss) => {
@@ -536,10 +555,11 @@ exports.carsave = (request, response) => {
         let n = 0;
         for (let index = n; index < n + 100; index++) {
           let randname = getRandomInt(carnames.length);
+          let randbrand = getRandomInt(carbrands.length);
           let car = new CarSchema({
             id: ("000" + index).slice(-4),
             carname: carnames[randname],
-            brand: "Car brand " + ("000" + index).slice(-4),
+            brand: carbrands[randbrand],
             description:
               "Car of " +
               ("000" + index).slice(-4) +

@@ -50,3 +50,4 @@ const carbrandss = [
   "Volkswagen",
   "Volvo",
 ];
+module.exports = carbrandss;
