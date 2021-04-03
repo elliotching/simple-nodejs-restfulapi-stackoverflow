@@ -547,11 +547,11 @@ exports.carsave = (request, response) => {
             variance: [],
           });
 
-          for (let index = 0; index < 2; index++) {
+          for (let jndex = 0; jndex < 2; jndex++) {
             car.variance.push({
-              id: ("000" + index).slice(-4),
-              name: index == 0 ? "manual" : "auto",
-              price: 175000 + index * 200,
+              id: ("000" + jndex).slice(-4),
+              name: jndex == 0 ? "manual" : "auto",
+              price: 175000 + index * 1000 + jndex * 200,
             });
           }
 
