@@ -1,5 +1,6 @@
 const User = require("../users/user.model.js");
 const CarSchema = require("../car/car.model.js");
+const carnames = require("../car/carnamessss.js");
 const uuid = require("uuid");
 const crypto = require("crypto");
 const secretkeyjwt = "fsp!hzbU@_^gZ8mvfAn2";
@@ -24,16 +25,9 @@ const defJwt = () => {
 };
 const unknownError = "Failed";
 
-
-
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
-
-
-
-
-
 
 // JWT signed by elliot
 // JWT signed by elliot
@@ -525,59 +519,57 @@ exports.carlist = (request, response) => {
 };
 
 exports.carsave = (request, response) => {
-  return (
-    new Promise((resolve, reject) => {
-      CarSchema.find()
-        .limit(1)
-        .then((list) => {
-          if (list.length >= 1) {
-            reject(false);
-          } else {
-            resolve(true);
-          }
-        });
-    })
-      .then((_) => {
-        return new Promise((resolve, reject) => {
-
-
-          let n = 0;
-          for (let index = n; index < n + 100; index++) {
-            let car = new CarSchema({
-              id: ("000" + index).slice(-4),
-              carname: "Car name " + ("000" + index).slice(-4),
-              brand: "Car brand " + ("000" + index).slice(-4),
-              description:
-                "Car of " +
-                ("000" + index).slice(-4) +
-                " is a brand new car. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-              variance: [],
-            });
-
-            for (let index = 0; index < 2; index++) {
-              car.variance.push({
-                id: ("000" + index).slice(-4),
-                name: "variance 00" + index,
-                price: 175000 + index * 200,
-              });
-            }
-
-            car.save();
-          }
+  return new Promise((resolve, reject) => {
+    CarSchema.find()
+      .limit(1)
+      .then((list) => {
+        if (list.length >= 1) {
+          // reject(false);
           resolve(true);
-        });
-      })
-      .then((carsss) => {
-        return response.send({
-          message: "success",
-        });
-      })
-      .catch((err) => {
-        return response.status(403).send({
-          message: err.message || err || "Failed",
-        });
-      })
-  );
+        } else {
+          resolve(true);
+        }
+      });
+  })
+    .then((_) => {
+      return new Promise((resolve, reject) => {
+        let n = 0;
+        for (let index = n; index < n + 100; index++) {
+          let randname = getRandomInt(carnames.length);
+          let car = new CarSchema({
+            id: ("000" + index).slice(-4),
+            carname: carnames[randname],
+            brand: "Car brand " + ("000" + index).slice(-4),
+            description:
+              "Car of " +
+              ("000" + index).slice(-4) +
+              " is a brand new car. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            variance: [],
+          });
+
+          for (let index = 0; index < 2; index++) {
+            car.variance.push({
+              id: ("000" + index).slice(-4),
+              name: index == 0 ? "manual" : "auto",
+              price: 175000 + index * 200,
+            });
+          }
+
+          car.save();
+        }
+        resolve(true);
+      });
+    })
+    .then((carsss) => {
+      return response.send({
+        message: "success",
+      });
+    })
+    .catch((err) => {
+      return response.status(403).send({
+        message: err.message || err || "Failed",
+      });
+    });
 };
 
 exports.cardelete = (request, response) => {

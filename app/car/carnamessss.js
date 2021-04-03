@@ -729,3 +729,5 @@ const carnames = [
   "VX8",
   "9LR",
 ];
+
+module.exports = carnames;
