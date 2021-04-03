@@ -563,30 +563,10 @@ exports.carsave = (request, response) => {
           resolve(true);
         });
       })
-      // .then((success) => {
-      //   // GET VALIDATION TOKEN FROM REQUEST (aka. JWT)
-      //   return new Promise((resolve, reject) => {
-      //     if (success) {
-      //       let validationToken = "";
-      //       validationToken = request.header("authorization").split(" ")[1];
-      //       if (validationToken) {
-      //         resolve(validationToken);
-      //       } else {
-      //         reject(false);
-      //       }
-      //     }
-      //   });
-      // })
-      // .then((success) => {
-      //   return new Promise((resolve, reject) => {
-      //     Cars.find((err, car) => {
-      //       if (err) reject(err);
-      //       if (car) resolve(car);
-      //     });
-      //   });
-      // })
       .then((carsss) => {
-        return response.send("success");
+        return response.send({
+          message: "success",
+        });
       })
       .catch((err) => {
         return response.status(403).send({
