@@ -10,7 +10,7 @@ services:
     #     source: d:/data/db
     #     target: /data/db
     ports:
-      - "3003:3000"
+      - "3000:3000"
     # volumes:
     #   - mongodb_for_elliot_nodejs:/data/db
     links:
