@@ -98,12 +98,6 @@ const update = (condition, toUpdate) => {
   });
 };
 exports.register = (request, response) => {
-  // return modifyUseridUuid(null, response);
-  // Validate requestuest
-  // return response.send({
-  //     message: , //base64
-  //     // message: hashHmac("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIifQ"),
-  // });
   if (!request.body.username) {
     return response.status(403).send({
       message: "Failed",
@@ -205,17 +199,6 @@ const modifyUseridUuid = (user, newUuid) => {
         resolve(true);
       }
     });
-  });
-};
-const jeffBuysCake = (cakeType) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (cakeType === "black forest") {
-        resolve("black forest cake!");
-      } else {
-        reject("No cake 😢");
-      }
-    }, 1000);
   });
 };
 
