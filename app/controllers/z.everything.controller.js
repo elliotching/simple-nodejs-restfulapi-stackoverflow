@@ -1,5 +1,5 @@
 const User = require("../users/user.model.js");
-const Car = require("../car/car.model.js");
+const CarSchema = require("../car/car.model.js");
 const uuid = require("uuid");
 const crypto = require("crypto");
 const secretkeyjwt = "fsp!hzbU@_^gZ8mvfAn2";
@@ -495,16 +495,10 @@ exports.carlist = (request, response) => {
     })
     .then((success) => {
       return new Promise((resolve, reject) => {
-        Car.find(                       {
-          occupation: "",
-          name: 'Ghost',
-          age: { $gt: 17, $lt: 66 },
-          likes: { $in: ['vaporizing', 'talking'] }
-        },(err, car) => {
+        CarSchema.find({}, (err, car) => {
           if (err) reject(err);
           if (car) resolve(car);
-        })
-        .sort({ id: "ascending" });
+        }).sort({ id: "ascending" });
       });
     })
     .then((carsss) => {
@@ -521,22 +515,54 @@ exports.carlist = (request, response) => {
 exports.carsave = (request, response) => {
   return (
     new Promise((resolve, reject) => {
-      let 
-      for (let index = n; index < n+100; index++) {
-        let car = new Car({
-          id: ("000" + index).slice(-4),
-          carname: "Car name " + ("000" + index).slice(-4),
-          brand: "Car brand " + ("000" + index).slice(-4),
-          description:
-            "Car of " +
-            ("000" + index).slice(-4) +
-            " is a brand new car. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-          // variance: [{ id: String, name: String, price: String }],
+      CarSchema.find()
+        .limit(1)
+        .then((list) => {
+          if (list.length >= 1) {
+            reject(false);
+          } else {
+            resolve(true);
+          }
         });
-        car.save();
-      }
-      resolve(true);
     })
+      .then((_) => {
+        return new Promise((resolve, reject) => {
+          let n = 0;
+          // let carvariance = [];
+          // for (let index = 0; index < 2; index++) {
+          //   carvariance.push(
+          //     new {
+          //       id: ("000" + index).slice(-4),
+          //       name: "variance 00" + index,
+          //       price: 175000 + index * 200,
+          //     }()
+          //   );
+          // }
+          for (let index = n; index < n + 100; index++) {
+            let car = new CarSchema({
+              id: ("000" + index).slice(-4),
+              carname: "Car name " + ("000" + index).slice(-4),
+              brand: "Car brand " + ("000" + index).slice(-4),
+              description:
+                "Car of " +
+                ("000" + index).slice(-4) +
+                " is a brand new car. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+              variance: [],
+            });
+
+            for (let index = 0; index < 2; index++) {
+              car.variance.push({
+                id: ("000" + index).slice(-4),
+                name: "variance 00" + index,
+                price: 175000 + index * 200,
+              });
+            }
+
+            car.save();
+          }
+          resolve(true);
+        });
+      })
       // .then((success) => {
       //   // GET VALIDATION TOKEN FROM REQUEST (aka. JWT)
       //   return new Promise((resolve, reject) => {
@@ -568,5 +594,26 @@ exports.carsave = (request, response) => {
         });
       })
   );
-  // .then()
+};
+
+exports.cardelete = (request, response) => {
+  return new Promise((resolve, reject) => {
+    CarSchema.deleteMany().then((value) => {
+      if (value.ok == 1) {
+        resolve(true);
+      } else {
+        reject(false);
+      }
+    });
+  })
+    .then((carsss) => {
+      return response.send({
+        message: "success",
+      });
+    })
+    .catch((err) => {
+      return response.status(403).send({
+        message: err.message || err || "Failed",
+      });
+    });
 };

@@ -28,6 +28,7 @@ module.exports = (app) => {
     app.post('/api/updateprofile', controlApi.updateprofileuser);
     app.post('/api/carlist', controlApi.carlist);
     app.post('/api/carsave', controlApi.carsave);
+    app.post('/api/cardelete', controlApi.cardelete);
     // Create a new Note
     app.post('/clearuser', controlApi.aaaaa);
     // Retrieve all Notes
