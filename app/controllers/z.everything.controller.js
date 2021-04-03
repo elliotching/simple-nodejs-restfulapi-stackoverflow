@@ -137,9 +137,39 @@ const saveUserInfo = (user, response) => {
       generateUuid(data)
         .then((finalUuid) => modifyPasswordHashing(data, finalUuid))
         .then((finalUuid) => modifyUseridUuid(data, finalUuid))
-        .then((_) => {
+        .then((user) =>
+          // generate jwt sign
+          jwtSign(
+            user,
+            {
+              username: user.username,
+              userid: user.userid,
+              timestamp: user.timestamp,
+            },
+            secretkeyjwt
+          )
+        )
+        .then((user) => {
+          return new Promise((resolve, reject) => {
+            User.findOneAndUpdate(
+              { username: user.username },
+              { token: user.token },
+              (err) => {
+                if (err) {
+                  reject(err.message);
+                } else {
+                  resolve(user);
+                }
+              }
+            );
+          });
+        })
+        .then((user) => {
+          // tempResponse without token yet
           return response.send({
-            message: "Created user " + user.username,
+            token: user.token,
+            displayusername: user.displayusername,
+            userid: user.userid,
           });
         })
         .catch((err) => {
@@ -164,7 +194,7 @@ const modifyPasswordHashing = (data, uuid) => {
       // {},
       (err) => {
         if (err) {
-          reject(err.message);
+          reject(err);
         } else {
           resolve(uuid);
         }
@@ -196,7 +226,8 @@ const modifyUseridUuid = (user, newUuid) => {
       if (err) {
         reject("unknown error while insrting new uuid");
       } else {
-        resolve(true);
+        user.userid = newUuid;
+        resolve(user);
       }
     });
   });
@@ -487,7 +518,7 @@ exports.carlist = (request, response) => {
         }
       });
     })
-    .then((token)=>validateToken(token))
+    .then((token) => validateToken(token))
     .then((success) => {
       return new Promise((resolve, reject) => {
         let start = (request.body.pageindex - 1) * request.body.pagesize;
@@ -526,8 +557,7 @@ exports.carsave = (request, response) => {
       .limit(1)
       .then((list) => {
         if (list.length >= 1) {
-          // reject(false);
-          resolve(true);
+          reject(false);
         } else {
           resolve(true);
         }
