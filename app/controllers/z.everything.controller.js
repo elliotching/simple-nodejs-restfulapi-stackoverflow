@@ -23,6 +23,18 @@ const defJwt = () => {
   return jwt.sign({ foo: "bar" }, secretkeyjwt);
 };
 const unknownError = "Failed";
+
+
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
+
+
+
+
+
 // JWT signed by elliot
 // JWT signed by elliot
 // YES! by ELLIOT!!
@@ -527,6 +539,8 @@ exports.carsave = (request, response) => {
     })
       .then((_) => {
         return new Promise((resolve, reject) => {
+
+
           let n = 0;
           for (let index = n; index < n + 100; index++) {
             let car = new CarSchema({
