@@ -119,12 +119,12 @@ exports.register = (request, response) => {
         });
         return saveUserInfo(user, response);
       }
-      response.status(500).send({
+      response.status(403).send({
         message: request.body.username + " existed. Do you want to sign in?",
       });
     })
     .catch((err) => {
-      response.status(500).send({
+      response.status(403).send({
         message: err.message || unknownError,
       });
     });
@@ -173,13 +173,13 @@ const saveUserInfo = (user, response) => {
           });
         })
         .catch((err) => {
-          return response.status(500).send({
+          return response.status(403).send({
             message: err.message,
           });
         });
     })
     .catch((err) => {
-      return response.status(500).send({
+      return response.status(403).send({
         message: err.message || unknownError,
       });
     });
@@ -324,7 +324,7 @@ exports.loginUser = (request, response) => {
       return response.status(200).send(loginResponse);
     })
     .catch((error) => {
-      return response.status(500).send({
+      return response.status(403).send({
         message: error.message || error || unknownError,
       });
     });
@@ -338,7 +338,7 @@ exports.findAll = (request, response) => {
       response.send(data);
     })
     .catch((err) => {
-      response.status(500).send({
+      response.status(403).send({
         message: error.message || error || unknownError,
       });
     });
@@ -362,7 +362,7 @@ exports.aaaaa = (request, response) => {
       });
     })
     .catch((err) => {
-      return response.status(500).send({
+      return response.status(403).send({
         message: err.message || err || unknownError,
       });
     });
