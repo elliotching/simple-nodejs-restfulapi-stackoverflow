@@ -75,7 +75,9 @@ app.get("/", (req, res) => {
 // Require Notes routes
 // require('./app/routes/full.routes.js')(app);
 
-require("./app/routes/routes.js")(app);
+const routesController = require("./app/routes/routes.js")
+
+routesController(app);
 
 // let ssss = (...args) => {
 //   console.log(args);
