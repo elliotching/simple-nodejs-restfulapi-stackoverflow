@@ -71,6 +71,12 @@ app.get("/", (req, res) => {
       "Welcome to EasyNotes application. Take notes quickly. Organize and keep track of all your notes.",
   });
 });
+app.get("/hello", (req, res) => {
+  res.json({
+    message:
+      "Hello World",
+  });
+});
 
 // Require Notes routes
 // require('./app/routes/full.routes.js')(app);
