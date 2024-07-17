@@ -44,7 +44,15 @@ async function main() {
     app.get("/comments", async (req, res) => {
         console.log("received request: '/comments'");
         if (!!mongoUri) {
-            const client = new MongoClient(mongoUri);
+            const options = {
+                serverSelectionTimeoutMS: 30000, // Increase the timeout to 30 seconds
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                ssl: false,
+                sslValidate: false,
+                tlsAllowInvalidCertificates: true, // Ensure certificates are valid
+            };
+            const client = new MongoClient(mongoUri, options);
             try {
                 await client.connect();
                 const database = client.db("sample_mflix");
