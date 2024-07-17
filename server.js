@@ -92,3 +92,8 @@ require("./app/routes/routes.js")(app);
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
+
+// my atlas online mongodb::
+// mongosh "mongodb+srv://iad72njd.cr5gg5j.mongodb.net/" --apiVersion 1 --username elliotching --password BrZGKaBdWvtc2KEY
+// UI web access:
+// https://cloud.mongodb.com/v2/669785451887ee7fe1e813e4#/overview?automateSecurity=true&connectCluster=iad72njd
