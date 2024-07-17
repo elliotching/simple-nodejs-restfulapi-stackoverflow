@@ -7,6 +7,21 @@ const PORT = process.env.PORT || 3000;
 const mongoUri = process.env.MONGOURI;
 console.log(`PORT: ${PORT}`);
 console.log(`MONGOURI: ${mongoUri}`);
+
+let client;
+const defineMongoClient = () => {
+    const options = {
+        serverSelectionTimeoutMS: 30000, // Increase the timeout to 30 seconds
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        ssl: true,
+        sslValidate: true,
+        tlsAllowInvalidCertificates: true, // Ensure certificates are valid
+    };
+    client = new MongoClient(mongoUri, options);
+    return client;
+};
+
 async function main() {
     // create express app
     const app = express();
@@ -44,15 +59,7 @@ async function main() {
     app.get("/comments", async (req, res) => {
         console.log("received request: '/comments'");
         if (!!mongoUri) {
-            const options = {
-                serverSelectionTimeoutMS: 30000, // Increase the timeout to 30 seconds
-                useNewUrlParser: true,
-                useUnifiedTopology: true,
-                ssl: false,
-                sslValidate: false,
-                tlsAllowInvalidCertificates: true, // Ensure certificates are valid
-            };
-            const client = new MongoClient(mongoUri, options);
+            const client = defineMongoClient();
             try {
                 await client.connect();
                 const database = client.db("sample_mflix");
