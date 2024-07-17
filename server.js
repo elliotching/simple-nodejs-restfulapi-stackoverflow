@@ -5,7 +5,8 @@ const isDocker = require("is-docker");
 const { MongoClient } = require("mongodb");
 const PORT = process.env.PORT || 3000;
 const mongoUri = process.env.MONGOURI;
-
+console.log(`PORT: ${PORT}`)
+console.log(`MONGOURI: ${mongoUri}`)
 async function main() {
     // create express app
     const app = express();
