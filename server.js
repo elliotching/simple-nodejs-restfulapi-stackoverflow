@@ -5,8 +5,8 @@ const isDocker = require("is-docker");
 const { MongoClient } = require("mongodb");
 const PORT = process.env.PORT || 3000;
 const mongoUri = process.env.MONGOURI;
-console.log(`PORT: ${PORT}`)
-console.log(`MONGOURI: ${mongoUri}`)
+console.log(`PORT: ${PORT}`);
+console.log(`MONGOURI: ${mongoUri}`);
 async function main() {
     // create express app
     const app = express();
@@ -17,15 +17,7 @@ async function main() {
     // parse requests of content-type - application/json
     app.use(bodyParser.json());
 
-    let client;
     if (!!mongoUri) {
-        client = new MongoClient(mongoUri);
-
-        try {
-            await client.connect();
-        } finally {
-            await client.close();
-        }
     } else {
         console.error(
             "no DB (MongoDB uri) specified. exiting..."
@@ -43,14 +35,17 @@ async function main() {
     });
 
     app.get("/hello", (req, res) => {
+        console.log("received request: '/hello'");
         res.json({
             message: "Hello World",
         });
     });
 
     app.get("/comments", async (req, res) => {
+        console.log("received request: '/comments'");
         if (!!mongoUri) {
             try {
+                const client = new MongoClient(mongoUri);
                 await client.connect();
                 const database = client.db("sample_mflix");
                 const collection =
@@ -84,7 +79,7 @@ async function main() {
         }
     });
 
-    require("./app/routes/routes.js")(app);
+    // require("./app/routes/routes.js")(app);
 
     app.listen(PORT, () => {
         console.log(`Server is listening on port ${PORT}`);
