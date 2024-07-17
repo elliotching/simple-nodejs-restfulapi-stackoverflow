@@ -15,7 +15,6 @@ const defineMongoClient = () => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         ssl: true,
-        sslValidate: true,
         tlsAllowInvalidCertificates: true, // Ensure certificates are valid
     };
     client = new MongoClient(mongoUri, options);
