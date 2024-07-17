@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const isDocker = require("is-docker");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const PORT = process.env.PORT || 3000;
 const mongoUri = process.env.MONGOURI;
 console.log(`PORT: ${PORT}`);
