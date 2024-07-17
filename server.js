@@ -17,12 +17,22 @@ const isDocker = require("is-docker");
 
 mongoose.Promise = global.Promise;
 
-function mongoUrl(port) {
-  if (isDocker()) {
-    return "mongodb://mongodd:" + port + "/db_nodejs_user_cars";
-  }
+const PORT = process.env.PORT || 3000;
 
-  return "mongodb://localhost:" + port + "/db_nodejs_user_cars";
+function mongoUrl(port) {
+    if (isDocker()) {
+        return (
+            "mongodb://mongodd:" +
+            port +
+            "/db_nodejs_user_cars"
+        );
+    }
+
+    return (
+        "mongodb://localhost:" +
+        port +
+        "/db_nodejs_user_cars"
+    );
 }
 // Connecting to the database
 console.log("Connecting to the database\n");
@@ -66,46 +76,19 @@ console.log("Connecting to the database\n");
 
 // define a simple route
 app.get("/", (req, res) => {
-  res.json({
-    message:
-      "Welcome to EasyNotes application. Take notes quickly. Organize and keep track of all your notes.",
-  });
+    res.json({
+        message:
+            "Welcome to EasyNotes application. Take notes quickly. Organize and keep track of all your notes.",
+    });
 });
 app.get("/hello", (req, res) => {
-  res.json({
-    message:
-      "Hello World",
-  });
+    res.json({
+        message: "Hello World",
+    });
 });
-
-// Require Notes routes
-// require('./app/routes/full.routes.js')(app);
 
 require("./app/routes/routes.js")(app);
 
-// let ssss = (...args) => {
-//   console.log(args);
-// };
-// ssss("","","");
-// listen for requests
-
-// let a = ["1","2","3","3","4","4"]
-// let b = ["5","6","7","5","4","5"]
-// a.forEach((aa, i) => {
-//   let foundOfEach = false;
-//   console.log(aa);
-//   b.forEach((bb, j) => {
-//     if (aa == bb) {
-//       foundOfEach = true;
-//       continue;
-//     }
-    
-//     console.log(foundOfEach);
-    
-//   });
-// });
-
-// return;
-app.listen(3000, () => {
-  console.log("Server is listening on port 3000");
+app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
 });
