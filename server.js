@@ -11,13 +11,15 @@ console.log(`MONGOURI: ${mongoUri}`);
 let client;
 const defineMongoClient = () => {
     const options = {
-        serverSelectionTimeoutMS: 30000, // Increase the timeout to 30 seconds
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        ssl: true,
-        tlsAllowInvalidCertificates: true, // Ensure certificates are valid
+        serverApi: {
+            version: ServerApiVersion.v1,
+            strict: true,
+            deprecationErrors: true,
+        },
     };
-    client = new MongoClient(mongoUri, options);
+    if (!client) {
+        client = new MongoClient(mongoUri, options);
+    }
     return client;
 };
 
