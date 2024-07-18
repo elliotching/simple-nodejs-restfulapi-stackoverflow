@@ -1,10 +1,9 @@
 // import { MongoClient } from "./node_modules/mongodb/mongodb";
 
-import express, { Request, Response } from "express";
+import express from "express";
+import { Request, Response } from "@types/express";
 import bodyParser from "body-parser";
 import path from "path";
-import mongoose from "mongoose";
-import isDocker from "is-docker";
 import axios, { AxiosResponse } from "axios";
 import { MongoClient, ServerApiVersion, Db } from "mongodb";
 import { getComments } from "./controllers/getComments";
