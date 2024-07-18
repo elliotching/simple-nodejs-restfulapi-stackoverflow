@@ -22,7 +22,7 @@ axios
     });
 
 export let client: MongoClient;
-export const defaultMongoClient = () => {
+export const defaultMongoClient = (): MongoClient => {
     const options = {
         serverApi: {
             version: ServerApiVersion.v1,
@@ -36,7 +36,7 @@ export const defaultMongoClient = () => {
     return client;
 };
 
-const app = express();
+const app: express.Express = express();
 
 async function main() {
     // create express app
@@ -59,7 +59,7 @@ async function main() {
     app.use(express.static(path.join(__dirname, "public")));
 
     // define a simple route
-    app.get("/", (req, res) => {
+    app.get("/", (req: Request, res: Response) => {
         console.log("received: '/'");
         res.json({
             message:
@@ -67,14 +67,14 @@ async function main() {
         });
     });
 
-    app.get("/hello", (req, res) => {
+    app.get("/hello", (req: Request, res: Response) => {
         console.log("received request: '/hello'");
         res.json({
             message: "Hello World",
         });
     });
 
-    app.use((req, res) => {
+    app.use((req: Request, res: Response) => {
         res.status(404).json({
             // error: req.baseUrl + "not found",
             error: "not found",
