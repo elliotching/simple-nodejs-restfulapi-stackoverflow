@@ -49,7 +49,6 @@ export const getComments = async (
             res.json({
                 data: toResponseComments,
             });
-            // res.json(JSON.stringify(comments));
         } finally {
             await client.close();
         }

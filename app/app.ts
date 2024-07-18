@@ -73,14 +73,22 @@ async function main() {
         });
     });
 
+    app.get(
+        "/comments",
+        async (
+            req: Request,
+            res: Response
+        ): Promise<void> => {
+            await getComments(req, res);
+        }
+    );
+
     app.use((req: Request, res: Response) => {
         res.status(404).json({
             // error: req.baseUrl + "not found",
             error: "not found",
         });
     });
-
-    app.get("/comments", getComments);
 
     app.listen(PORT, () => {
         console.log(`Server is listening on port ${PORT}`);
