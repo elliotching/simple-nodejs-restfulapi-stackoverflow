@@ -83,6 +83,16 @@ async function main() {
         }
     );
 
+    app.get(
+        "/error",
+        (
+            req: Request,
+            res: Response
+        ) => {
+            res.sendFile("https://www.herokucdn.com/error-pages/application-error.html");
+        }
+    );
+
     app.use((req: Request, res: Response) => {
         res.status(404).json({
             // error: req.baseUrl + "not found",
