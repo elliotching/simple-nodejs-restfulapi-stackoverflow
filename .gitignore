@@ -2,3 +2,6 @@
 **/package-lock.json
 
 *.sensitive
+app.js
+index.js
+./app/*.js
