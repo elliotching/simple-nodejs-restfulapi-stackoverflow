@@ -53,6 +53,16 @@ async function main() {
         return;
     }
 
+    // Serve static files from the 'public' directory
+    app.use(express.static(path.join(__dirname, "public")));
+
+    // Define a route to serve the custom error page
+    app.get("/app-error", (req, res) => {
+        res.sendFile(
+            path.join(__dirname, "public/app-error.html")
+        );
+    });
+
     // define a simple route
     app.get("/", (req, res) => {
         console.log("received: '/'");
