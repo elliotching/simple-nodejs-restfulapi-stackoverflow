@@ -4,4 +4,4 @@
 *.sensitive
 app.js
 index.js
-./app/*.js
+*.js
