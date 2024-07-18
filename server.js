@@ -15,7 +15,9 @@ console.log(`MONGOURI: ${mongoUri}`);
 axios
     .get("https://api.ipify.org?format=json")
     .then((result) => {
-        console.log(`result ip: ${JSON.stringify(result.data)}`);
+        console.log(
+            `result ip: ${JSON.stringify(result.data)}`
+        );
     });
 
 let client;
@@ -70,6 +72,14 @@ async function main() {
     app.get("/comments", async (req, res) => {
         console.log("received request: '/comments'");
         if (!!mongoUri) {
+            const result = await axios.get(
+                "https://api.ipify.org?format=json"
+            );
+
+            console.log(
+                `result ip: ${JSON.stringify(result.data)}`
+            );
+
             const client = defineMongoClient();
             try {
                 await client.connect();
