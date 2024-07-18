@@ -92,7 +92,7 @@ async function main() {
                     .toArray();
                 // console.log(JSON.stringify(comment));
 
-                comments.map((comment) => {
+                comments = comments.map((comment) => {
                     return {
                         name: comment.name,
                         email: comment.email,

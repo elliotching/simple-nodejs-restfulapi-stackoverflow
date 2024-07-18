@@ -1,0 +1,44 @@
+First , I would give my example in Node.JS app. I guess yours is in python, but it should works the same.
+
+Use this simple api to get your public IP. Call this api in your heroku app. I get this from https://www.ipify.org/
+
+```
+https://api.ipify.org?format=json
+```
+
+Example Code:
+
+```
+const axios = require("axios");
+
+async function main() {
+    const result = await axios.get(
+        "https://api.ipify.org?format=json"
+    );
+
+    console.log(
+        `result ip: ${JSON.stringify(result.data)}`
+    );
+    // ...
+    // ...
+}
+
+```
+
+Once you push your code to heroku , and your app is running , you should see the IP you have called in your app.
+
+```
+2024-07-18T03:01:17.611991+00:00 app[web.1]: result ip: {"ip":"184.72.212.113"}
+```
+
+Next, go to your MongoDB Atlas Network Access and add this IP.
+
+! But, don't add full IP, instead you changed the last 2 bytes or 1 bytes as flexible. For example 184.72.212.113 , last 2 bytes would be the '212' and '113', the IP might change from time to time but we can still limit it to a certain range. so we add in `184.72.0.0/16` or `184.72.212.0/24` . Take note that `/16` means to fix the first 2 bytes (8bits * n). if u want fix full IP , 8 x 4 = 32, `/32`, and there are `/8`,`/16`,`/24` and so on...
+(Please ignore the 0.0.0.0 in my screenshot for sample purpose, in this case it can access from anywhere)
+
+[![mongoDB atlas screenshot sample][1]][1]
+
+Now you should be able to access your DB from your heroku. 
+
+
+  [1]: https://i.sstatic.net/zyFQt65n.png
