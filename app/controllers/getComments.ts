@@ -1,7 +1,7 @@
 import { Comments } from "../interfaces/types";
 import { defaultMongoClient, client } from "../app";
 import express from "express";
-import { Request, Response } from "@types/express";
+import { Request, Response } from "express";
 import axios, { AxiosResponse } from "axios";
 import { MongoClient, ServerApiVersion, Db } from "mongodb";
 const PORT: string = process.env.PORT || "3000";

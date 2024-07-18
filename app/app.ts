@@ -1,7 +1,7 @@
 // import { MongoClient } from "./node_modules/mongodb/mongodb";
 
 import express from "express";
-import { Request, Response } from "@types/express";
+import { Request, Response } from "express";
 import bodyParser from "body-parser";
 import path from "path";
 import axios, { AxiosResponse } from "axios";
