@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "description": "Never miss a thing in Life. Take notes quickly. Organize and keep track of all your notes.",
     "scripts": {
-        "start": "tsc -p ./tsconfig.json && nodemon ./app/app.js",
         "app": "nodemon ./app/app.js",
         "test": "echo \"Error: no test specified\" && exit 1",
         "deploy": "git add . && git commit -m Heroku && git push heroku master"
