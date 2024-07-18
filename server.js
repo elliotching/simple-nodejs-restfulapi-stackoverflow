@@ -69,6 +69,10 @@ async function main() {
         });
     });
 
+    app.get("/crash", async (req, res) => {
+        throw Error("Test crash");
+    });
+
     app.get("/comments", async (req, res) => {
         console.log("received request: '/comments'");
         if (!!mongoUri) {
