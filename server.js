@@ -2,11 +2,21 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const isDocker = require("is-docker");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const axios = require("axios");
+const {
+    MongoClient,
+    ServerApiVersion,
+} = require("mongodb");
 const PORT = process.env.PORT || 3000;
 const mongoUri = process.env.MONGOURI;
 console.log(`PORT: ${PORT}`);
 console.log(`MONGOURI: ${mongoUri}`);
+
+axios
+    .get("https://api.ipify.org?format=json")
+    .then((result) => {
+        console.log(`result ip: ${JSON.stringify(result.data)}`);
+    });
 
 let client;
 const defineMongoClient = () => {
